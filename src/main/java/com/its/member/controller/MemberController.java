@@ -35,8 +35,9 @@ public class MemberController {
     public String login(@ModelAttribute MemberDTO memberDTO,HttpSession session ){
         MemberDTO loginResult = memberService.login(memberDTO);
         session.setAttribute("loginEmail",loginResult.getMemberEmail());
+        session.setAttribute("id",loginResult.getId());
         if (loginResult != null){
-            return "memberPages/main";
+            return "memberPages/mypage";
         }else {
             return "memberPages/login";
         }
@@ -80,6 +81,25 @@ public class MemberController {
     public ResponseEntity deleteAjax(@PathVariable Long id){
         memberService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK); // ajax 호출한 부분에 리턴으로 200 응답을 줌.
+    }
+    // 수정화면 요청
+    @GetMapping("/update")
+    public String updateForm(HttpSession session,Model model ){
+        Long id = (Long) session.getAttribute("id"); //강제형 변환
+        MemberDTO memberDTO = memberService.findById(id);
+        model.addAttribute("updateMember",memberDTO);
+        return "memberPages/update";
+    }
+    @PostMapping("/update")
+    public  String update(@ModelAttribute MemberDTO memberDTO){
+        memberService.update(memberDTO);
+        return "redirect:/member/"+memberDTO.getId();
+    }
+    // 수정처리(put 요청)
+    @PutMapping("/{id}") // json 형싟에서 불러올때는 @requestBody putmapping은 ajax일떄
+    public ResponseEntity updateByAjax(@RequestBody MemberDTO memberDTO){
+        memberService.update(memberDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 
