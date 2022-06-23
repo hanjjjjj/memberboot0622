@@ -60,4 +60,19 @@ public class MemberTest {
             memberService.save(newMember(i));
         });
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("회원 삭제 테스트")
+    public void memberDeleteTest(){
+        /**
+         * 신규 회원 등록
+         * 삭제 처리
+         * 해당 회원으로 조회시 null 이면 통과
+         */
+        Long savedId = memberService.save(newMember(999));
+        memberService.delete(savedId);
+        assertThat(memberService.findById(savedId)).isNotNull();
+    }
 }
