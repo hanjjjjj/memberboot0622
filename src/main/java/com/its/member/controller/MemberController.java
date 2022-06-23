@@ -101,5 +101,11 @@ public class MemberController {
         memberService.update(memberDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    // 이메일 중복체크
+    @PostMapping("/emailCheck")
+    public @ResponseBody String emailCheck(@RequestParam String memberEmail){
+        String checkResult = memberService.emailCheck(memberEmail);
+        return checkResult;
+    }
 }
 
