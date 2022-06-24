@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,6 +7,7 @@
 <body>
 <h2>로그인</h2>
 <form action="/member/login" method="post">
+    <input type="hidden" name="redirectURL" th:value="${redirectURL}">
     이메일<input type="text" name="memberEmail"><br>
     비밀번호<input type="text" name="memberPassword"><br>
     <input type="submit" value="로그인">

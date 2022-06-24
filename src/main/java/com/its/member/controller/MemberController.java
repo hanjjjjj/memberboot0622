@@ -28,16 +28,19 @@ public class MemberController {
         return "memberPages/login";
     }
     @GetMapping("/login-form") //로그인 화면
-    public String loginForm(){
+    public String loginForm(@RequestParam(value = "redirectURL", defaultValue = "/") String redirectURL, Model model){
+        model.addAttribute("redirectURL", redirectURL);
         return "memberPages/login";
     }
     @PostMapping("/login") //로그인 처리
-    public String login(@ModelAttribute MemberDTO memberDTO,HttpSession session ){
+    public String login(@ModelAttribute MemberDTO memberDTO,HttpSession session,
+    @RequestParam(value = "redirectURL", defaultValue = "/") String redirectURL){
         MemberDTO loginResult = memberService.login(memberDTO);
         session.setAttribute("loginEmail",loginResult.getMemberEmail());
         session.setAttribute("id",loginResult.getId());
         if (loginResult != null){
-            return "memberPages/mypage";
+            // return "memberPages/mypage";
+            return "redirect:" + redirectURL; // 로그인 하지 않은 사용자가 로그인 직전에 요청한 주소로 보내줌
         }else {
             return "memberPages/login";
         }
@@ -106,6 +109,12 @@ public class MemberController {
     public @ResponseBody String emailCheck(@RequestParam String memberEmail){
         String checkResult = memberService.emailCheck(memberEmail);
         return checkResult;
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate(); // 세션 전체를 무효화
+        session.removeAttribute("loginEmail"); // loginEmail 만 세션값 삭제
+        return "redirect:/";
     }
 }
 
